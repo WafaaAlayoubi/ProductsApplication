@@ -11,16 +11,21 @@ namespace ProductsApplication.Controllers
 {
     public class ProductController : Controller
     {
+        ProductsDAO repository;
+        public ProductController()
+        {
+            repository = new ProductsDAO();
+        }
         public IActionResult Index()
         {
-            ProductsDAO products = new ProductsDAO();
-            return View(products.GetAllProducts());
+            
+            return View(repository.GetAllProducts());
         }
 
         public IActionResult SearchResults(string searchTerm)
         {
-            ProductsDAO products = new ProductsDAO();
-            List<ProductModel> productList = products.SearchProducts(searchTerm);
+            
+            List<ProductModel> productList = repository.SearchProducts(searchTerm);
             return View("index",productList);
         }
 
@@ -39,16 +44,22 @@ namespace ProductsApplication.Controllers
         }
         public IActionResult ProcessEdit(ProductModel product)
         {
-            ProductsDAO products = new ProductsDAO();
-            products.Update(product);
-            return View("Index", products.GetAllProducts());
+            
+            repository.Update(product);
+            return View("Index", repository.GetAllProducts());
+        }
+        public IActionResult ProcessEditReturnPartial(ProductModel product)
+        {
+            
+            repository.Update(product);
+            return PartialView("_ProductCard", product);
         }
 
         public IActionResult Delete(ProductModel product)
         {
-            ProductsDAO products = new ProductsDAO();
-            products.Delete(product);
-            return View("Index", products.GetAllProducts());
+            
+            repository.Delete(product);
+            return View("Index", repository.GetAllProducts());
         }
 
 
@@ -63,9 +74,20 @@ namespace ProductsApplication.Controllers
         }
         public IActionResult ProcessCreate(ProductModel product)
         {
-            ProductsDAO products = new ProductsDAO();
-            int foundProduct = products.Insert(product);
-            return View("index", products.GetAllProducts());
+            
+            int foundProduct = repository.Insert(product);
+            return View("index", repository.GetAllProducts());
+        }
+
+        public IActionResult ShowOneProduct(int Id)
+        {
+            
+            return View(repository.GetProductById(Id));
+        }
+        public IActionResult ShowOneProductJSON(int Id)
+        {
+             
+            return Json(repository.GetProductById(Id));
         }
     }
 }
